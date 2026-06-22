@@ -11,7 +11,7 @@ st.set_page_config(
 
 # Load Data
 df = pd.read_csv(
-    r"\superstore_cleaned.csv",
+    r".\superstore_cleaned.csv",
     parse_dates=["order_date", "ship_date"]
 )
 
