@@ -4,7 +4,7 @@ import plotly.express as px
 import numpy as np
 
 st.set_page_config(
-    page_title="Ssuperstore Dashboard",
+    page_title="Superstore Dashboard",
     page_icon="📊",
     layout="wide"
 )
@@ -16,35 +16,44 @@ df = pd.read_csv(
 
 df["order_date"] = pd.to_datetime(df["order_date"])
 
-# Sidebar Filters
+#sidebar filter 
+
 with st.sidebar:
-    st.header("Filters")
 
-    regions = st.multiselect(
-        "Region",
-        options=df["region"].unique(),
-        default=df["region"].unique()
-    )
+    st.header("🔍 Filters")
 
-    order_year = df["order_date"].dt.year
+    with st.form("filter_form"):
 
-    years = st.multiselect(
-        "Year",
-        options=sorted(order_year.unique()),
-        default=sorted(order_year.unique())
-    )
+        regions = st.multiselect(
+            "Region",
+            options=df["region"].unique(),
+            default=df["region"].unique()
+        )
 
-    shipping_mode= st.multiselect(
-        "Shipping mode",
-        options=df["ship_mode"].unique(),
-        default=df["ship_mode"].unique()
-    )
+        order_year = df["order_date"].dt.year
 
-    segment=st.multiselect(
-        "Segment",
-        options=df["segment"].unique(),
-        default=df["segment"].unique()
-    )
+        years = st.multiselect(
+            "Year",
+            options=sorted(order_year.unique()),
+            default=sorted(order_year.unique())
+        )
+
+        shipping_mode = st.multiselect(
+            "Shipping Mode",
+            options=df["ship_mode"].unique(),
+            default=df["ship_mode"].unique()
+        )
+
+        segment = st.multiselect(
+            "Segment",
+            options=df["segment"].unique(),
+            default=df["segment"].unique()
+        )
+
+        apply_filters = st.form_submit_button(
+            "🔍 Apply Filters",
+            type="primary"
+                      )
 
 # Apply Filters
 filtered = df[
@@ -99,7 +108,19 @@ with tab1:
         use_container_width=True
     )
 
-    # Monthly Sales by Year
+    # Download Filtered Data
+    csv = filtered.to_csv(
+        index=False
+    ).encode("utf-8")
+
+    st.download_button(
+        label="📥 Download Filtered Data",
+        data=csv,
+        file_name="filtered_superstore_data.csv",
+        mime="text/csv",
+        type="primary"
+    )
+
     st.header("Monthly Sales by Year")
 
     filtered["order_year"] = filtered["order_date"].dt.year
